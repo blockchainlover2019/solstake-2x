@@ -23,6 +23,7 @@ pub struct Settings {
     
     pub bump: u8,
     pub pool_bump: u8,
+    pub miner_started: u8,
 
     pub last_pool_winner: Pubkey,
     pub last_pool_reward: u64,

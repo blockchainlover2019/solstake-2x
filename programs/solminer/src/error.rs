@@ -38,6 +38,9 @@ pub enum CustomError {
     #[msg("Amount is not in the range of 1~1000 sol")]
     InvalidAmount,
 
-    #[msg("You are blocked")]
+    #[msg("You are blocked by Admin")]
     Blocked,
+
+    #[msg("MinerNotStarted")]
+    MinerNotStarted,
 }

@@ -48,6 +48,11 @@ impl<'info> Compound<'info> {
             .unwrap();
         require!(new_roi_time <= current_time, CustomError::CantClaimNow);
         require!(self.invest_data.days < WITHDRAW_LIMIT, CustomError::CantCompound);
+        
+        require!(
+          self.settings.miner_started == 1,
+          CustomError::MinerNotStarted
+        );
         Ok(())
     }
 }
@@ -57,13 +62,17 @@ pub fn handler(ctx: Context<Compound>) -> Result<()> {
     let current_time = Clock::get()?.unix_timestamp as u64;
 
     let accts = ctx.accounts;
-    let new_active_balance = accts
+    let mut new_active_balance = accts
         .invest_data
         .active_balance
         .checked_mul(accts.settings.roi)
         .unwrap()
         .checked_div(FEE_DIVIDER)
         .unwrap();
+    
+    if accts.invest_data.days == WITHDRAW_LIMIT {
+      new_active_balance = accts.invest_data.amount * 2;
+    }
     
     let daily_reward = new_active_balance.checked_sub(accts.invest_data.active_balance).unwrap();
 
@@ -81,7 +90,7 @@ pub fn handler(ctx: Context<Compound>) -> Result<()> {
     accts.invest_data.days += 1;
 
     // send compound_fee to marketing wallet
-    let signer_seeds: &[&[&[u8]]] = &[&[POOL_SEED.as_ref(), &[accts.settings.pool_bump]]];
+    /*let signer_seeds: &[&[&[u8]]] = &[&[POOL_SEED.as_ref(), &[accts.settings.pool_bump]]];
     invoke_signed(
         &system_instruction::transfer(
             &accts.pool.key(),
@@ -94,7 +103,7 @@ pub fn handler(ctx: Context<Compound>) -> Result<()> {
             accts.system_program.to_account_info(),
         ],
         signer_seeds,
-    )?;
+    )?;*/
 
     Ok(())
 }

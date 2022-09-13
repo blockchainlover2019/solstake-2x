@@ -24,3 +24,6 @@ pub use remove_from_blacklist::*;
 
 pub mod set_pool_prize;
 pub use set_pool_prize::*;
+
+pub mod start_miner;
+pub use start_miner::*;

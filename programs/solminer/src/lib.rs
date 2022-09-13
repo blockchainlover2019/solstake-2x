@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("4v1fGrGbA2WD9B3zntb6WaxmhJEj9Fmjvj36J3dsxJGL");
+declare_id!("G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12");
 
 /// constant
 pub mod constants;
@@ -44,6 +44,10 @@ pub mod solminer {
   
     pub fn set_pool_prize(ctx: Context<SetPoolPrize>, mins: u64, ratio: u64) -> Result<()> {
       set_pool_prize::handler(ctx, mins, ratio)
+    }
+
+    pub fn start_miner(ctx: Context<StartMiner>) -> Result<()> {
+      start_miner::handler(ctx)
     }
 
     pub fn compound(ctx: Context<Compound>) -> Result<()> {

@@ -2,13 +2,13 @@
 seeds = false
 
 [programs.localnet]
-solminer = "4v1fGrGbA2WD9B3zntb6WaxmhJEj9Fmjvj36J3dsxJGL"
+solminer = "G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12"
 
 [programs.devnet]
-solminer = "4v1fGrGbA2WD9B3zntb6WaxmhJEj9Fmjvj36J3dsxJGL"
+solminer = "G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12"
 
 [programs.mainnet]
-solminer = "4v1fGrGbA2WD9B3zntb6WaxmhJEj9Fmjvj36J3dsxJGL"
+solminer = "G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12"
 
 [registry]
 url = "https://anchor.projectserum.com"

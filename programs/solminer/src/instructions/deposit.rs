@@ -73,13 +73,17 @@ impl<'info> Deposit<'info> {
             CustomError::InvalidAmount
         );
         require!(
-            self.referrer.key().ne(&self.user.key()) && self.referrer.key().ne(&Pubkey::default()),
+            self.referrer.key().ne(&Pubkey::default()),
             CustomError::InvalidReferrer
         );
         require!(
+          self.settings.miner_started == 1,
+          CustomError::MinerNotStarted
+        );
+        /*require!(
           self.user_state.matrix_count <= 1,
           CustomError::MatrixCountOverflow
-        );
+        );*/
         Ok(())
     }
 }
@@ -113,8 +117,6 @@ pub fn handler(ctx: Context<Deposit>, amount: u64, seed_key: Pubkey) -> Result<(
     accts.invest_data.bump = *ctx.bumps.get("invest_data").unwrap();
     accts.invest_data.last_roi_time = current_time;
 
-    accts.ref_user_state.referred_count = accts.ref_user_state.referred_count + 1;
-    accts.ref_user_state.referral_reward = accts.ref_user_state.referral_reward + ref_fee;
     
     if accts.settings.last_deposit_time + accts.settings.pool_prize_limit < current_time {
         let signer_seeds: &[&[&[u8]]] = &[&[POOL_SEED.as_ref(), &[accts.settings.pool_bump]]];
@@ -147,7 +149,21 @@ pub fn handler(ctx: Context<Deposit>, amount: u64, seed_key: Pubkey) -> Result<(
         .unwrap();
 
     let real_amount = amount.checked_sub(deposit_fee).unwrap();
-    let contract_amount = real_amount.checked_sub(ref_fee).unwrap();
+    let mut contract_amount = real_amount;
+    // send referral
+    if accts.referrer.key().ne(&accts.user.key()) {
+      accts.ref_user_state.referred_count = accts.ref_user_state.referred_count + 1;
+      accts.ref_user_state.referral_reward = accts.ref_user_state.referral_reward + ref_fee;
+      invoke(
+        &system_instruction::transfer(&accts.user.key(), &accts.referrer.key(), ref_fee),
+        &[
+            accts.user.to_account_info(),
+            accts.referrer.to_account_info(),
+            accts.system_program.to_account_info(),
+        ],
+      )?;
+      contract_amount = real_amount.checked_sub(ref_fee).unwrap();
+    }
 
     accts.invest_data.active_balance = real_amount;
     
@@ -169,14 +185,6 @@ pub fn handler(ctx: Context<Deposit>, amount: u64, seed_key: Pubkey) -> Result<(
             accts.system_program.to_account_info(),
         ],
     )?;
-    // send referral
-    invoke(
-        &system_instruction::transfer(&accts.user.key(), &accts.referrer.key(), ref_fee),
-        &[
-            accts.user.to_account_info(),
-            accts.referrer.to_account_info(),
-            accts.system_program.to_account_info(),
-        ],
-    )?;
+
     Ok(())
 }
