@@ -13,8 +13,8 @@ pub struct Initialize<'info> {
     #[account(
         init,
         payer = admin,
-        seeds = [SETTINGS_SEED, Pubkey::from_str("37a2oCkMwqqAWT9zqtgST5pAhvXirbPFphf3FF7N24cF").unwrap().as_ref()],
-        //seeds = [SETTINGS_SEED, admin.key().as_ref()],
+        //seeds = [SETTINGS_SEED, Pubkey::from_str("37a2oCkMwqqAWT9zqtgST5pAhvXirbPFphf3FF7N24cF").unwrap().as_ref()],
+        seeds = [SETTINGS_SEED, admin.key().as_ref()],
         bump,
         space = 8 + size_of::<Settings>()
     )]
@@ -54,8 +54,8 @@ pub fn handler(ctx: Context<Initialize>,
 ) -> Result<()> {
      let accts = ctx.accounts;
      // todo --------------------------------- fix here
-     let admin_key = Pubkey::from_str("37a2oCkMwqqAWT9zqtgST5pAhvXirbPFphf3FF7N24cF").unwrap();
-    //let admin_key = accts.admin.key();
+    // let admin_key = Pubkey::from_str("37a2oCkMwqqAWT9zqtgST5pAhvXirbPFphf3FF7N24cF").unwrap();
+    let admin_key = accts.admin.key();
     accts.settings.admin = admin_key;// accts.admin.key();
     accts.settings.pool = accts.pool.key();
     accts.settings.roi = roi;

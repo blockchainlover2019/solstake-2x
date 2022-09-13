@@ -2,19 +2,19 @@
 seeds = false
 
 [programs.localnet]
-solminer = "G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12"
+solminer = "JA9S2YDFqL9RbB71dmvJQjtzd2mr9tZC8psD9gYTdnbn"
 
 [programs.devnet]
-solminer = "G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12"
+solminer = "JA9S2YDFqL9RbB71dmvJQjtzd2mr9tZC8psD9gYTdnbn"
 
 [programs.mainnet]
-solminer = "G9b8S6XsFDZchBXHFXAGpmssnFPRRiA92XEd3jv4jY12"
+solminer = "JA9S2YDFqL9RbB71dmvJQjtzd2mr9tZC8psD9gYTdnbn"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "./test-keypair.json"
 
 [scripts]
