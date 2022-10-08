@@ -11,7 +11,7 @@ pub struct InitUserState<'info> {
 
     #[account(
         mut,
-        seeds = [SETTINGS_SEED, settings.admin.as_ref()],
+        seeds = [SETTINGS_SEED],
         bump = settings.bump,
     )]
     pub settings: Box<Account<'info, Settings>>,
@@ -37,6 +37,7 @@ impl<'info> InitUserState<'info> {
 
 #[access_control(ctx.accounts.validate())]
 pub fn handler(ctx: Context<InitUserState>, user_key: Pubkey) -> Result<()> {
+    require!(user_key.ne(&Pubkey::default()), CustomError::ZeroAddressDetected);
     let current_time = Clock::get()?.unix_timestamp as u64;
 
     let accts = ctx.accounts;

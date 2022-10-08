@@ -24,20 +24,11 @@ const program = anchor.workspace
 
 export const initializeProgram = async (admin: User) => {
 
-  let settingsKey = await getSettingsKey(admin.publicKey);
+  let settingsKey = await getSettingsKey();
+  console.log("key =", settingsKey.toBase58());
   const poolKey = await getPoolKey();
-
-  let stkey = await getSettingsKey(new PublicKey("8WXFgbaf7WapBdCd8h674941kD1abJ9mx1sGgw7LMiac"));
-  console.log("stkey =", stkey.toBase58());
-  
   let res = await program.methods
-    .initialize(
-      new BN(Constants.ROI),
-      new BN(Constants.FEE),
-      new BN(Constants.REF_FEE),
-      new BN(Constants.WITHDRAW_TAX),
-      new BN(Constants.COMPOUND_FEE),
-    )
+    .initialize()
     .accounts({
       admin: admin.publicKey,
       settings: settingsKey,
@@ -54,7 +45,7 @@ export const initializeProgram = async (admin: User) => {
 
 export const initBlacklist = async (admin: User) => {
 
-  let settingsKey = await getSettingsKey(admin.publicKey);
+  let settingsKey = await getSettingsKey();
   const poolKey = await getPoolKey();
 
   const blacklistKey = await getBlacklistKey();
@@ -63,6 +54,7 @@ export const initBlacklist = async (admin: User) => {
     )
     .accounts({
       admin: admin.publicKey,
+      settings: settingsKey,
       blacklist: blacklistKey,
       systemProgram: SystemProgram.programId,
       rent: SYSVAR_RENT_PUBKEY
@@ -81,6 +73,7 @@ export const createUserStateInstruction = async (
     .initUserState(userKey)
     .accounts({
       payer: payer.publicKey,
+      settings: await getSettingsKey(),
       userState: userStateKey,
       systemProgram: SystemProgram.programId,
       rent: SYSVAR_RENT_PUBKEY,
@@ -91,6 +84,8 @@ export const createUserStateInstruction = async (
 export const deposit = async (user: User, solAmount: number, refAddress: PublicKey) => {
   const settings = await getSettings();
   if (!settings) throw new Error('Please init program');
+  console.log("settings =", settings);
+
   let userStateKey = await getUserStateKey(user.publicKey);
   let refUserKey = refAddress;
 
@@ -119,20 +114,21 @@ export const deposit = async (user: User, solAmount: number, refAddress: PublicK
     )
     .accounts({
       user: user.publicKey,
-      settings: settings.publicKey,
+      settings: await getSettingsKey(),
       devWallet: settings.account.devWallet,
       pool: settings.account.pool,
       userState: userStateKey,
       investData: investDataKey,
       referrer: refUserKey,
       refUserState: refUserStateKey,
-      lastDepositUser: settings.lastDepositUser,
+      lastDepositUser: settings.account.lastDepositUser,
       systemProgram: SystemProgram.programId,
       rent: SYSVAR_RENT_PUBKEY
     })
     .instruction());
   
-  let txHash = await sendAndConfirmTransaction(program.provider.connection, tx, [user.keypair]);
+  //let txHash = await sendAndConfirmTransaction(program.provider.connection, tx, [user.keypair]);
+  let txHash = await program.provider.connection.simulateTransaction(tx, [user.keypair]);
   console.log("txHash =", txHash);
 
   const contractBalance = (await program.provider.connection.getBalance(settings.account.pool)).toFixed();
@@ -262,9 +258,8 @@ export const getUserInvestDataList = async (userKey: PublicKey) => {
     return null;
   }
 }
-export const getSettingsKey = async (admin: PublicKey) => {
-  console.log("admin =", admin);
-  return (await PublicKey.findProgramAddress([Buffer.from(Constants.SETTINGS_SEED), admin.toBuffer()], program.programId))[0];
+export const getSettingsKey = async () => {
+  return (await PublicKey.findProgramAddress([Buffer.from(Constants.SETTINGS_SEED)], program.programId))[0];
 }
 
 export const getPoolKey = async () => {

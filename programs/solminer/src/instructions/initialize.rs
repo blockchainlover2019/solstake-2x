@@ -9,12 +9,10 @@ pub struct Initialize<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
 
-    //------------------------------- todo: fix here
     #[account(
         init,
         payer = admin,
-        //seeds = [SETTINGS_SEED, Pubkey::from_str("37a2oCkMwqqAWT9zqtgST5pAhvXirbPFphf3FF7N24cF").unwrap().as_ref()],
-        seeds = [SETTINGS_SEED, admin.key().as_ref()],
+        seeds = [SETTINGS_SEED],
         bump,
         space = 8 + size_of::<Settings>()
     )]
@@ -45,24 +43,18 @@ impl<'info> Initialize<'info> {
 /// to init global state with some data for validation
 ///
 #[access_control(ctx.accounts.validate())]
-pub fn handler(ctx: Context<Initialize>, 
-    roi: u64, 
-    fee: u64, 
-    ref_fee: u64,
-    withdraw_tax: u64,
-    compound_fee: u64
-) -> Result<()> {
-     let accts = ctx.accounts;
-     // todo --------------------------------- fix here
-    // let admin_key = Pubkey::from_str("37a2oCkMwqqAWT9zqtgST5pAhvXirbPFphf3FF7N24cF").unwrap();
+pub fn handler(ctx: Context<Initialize>) -> Result<()> {
+    let accts = ctx.accounts;
     let admin_key = accts.admin.key();
-    accts.settings.admin = admin_key;// accts.admin.key();
+    accts.settings.admin = admin_key;
     accts.settings.pool = accts.pool.key();
-    accts.settings.roi = roi;
-    accts.settings.fee = fee;
-    accts.settings.ref_fee = ref_fee;
-    accts.settings.withdraw_tax_rate = withdraw_tax;
-    accts.settings.compound_fee = compound_fee;
+
+    accts.settings.roi = 10115; // 1.0115 x
+    accts.settings.fee = 500; // 5%
+    accts.settings.ref_fee = 1000; // 10%
+    accts.settings.withdraw_tax_rate = 5000; // 50%
+    accts.settings.compound_fee = 100; // 1%
+
     accts.settings.bump = *ctx.bumps.get("settings").unwrap();
     accts.settings.pool_bump = *ctx.bumps.get("pool").unwrap();
     

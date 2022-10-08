@@ -8,7 +8,11 @@ pub struct AddBlacklist<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
 
-    #[account(has_one = admin)]
+    #[account(
+      seeds = [SETTINGS_SEED],
+      bump,
+      has_one = admin
+    )]
     pub settings: Box<Account<'info, Settings>>,
     
     #[account(
@@ -23,6 +27,9 @@ pub fn handler(ctx: Context<AddBlacklist>,
     black_address: Pubkey,
 ) -> Result<()> {
     let accts = ctx.accounts;
+    
+    require!(black_address.ne(&Pubkey::default()), CustomError::ZeroAddressDetected);
+
     accts.blacklist.addresses.push(black_address);
     Ok(())
 }

@@ -9,7 +9,6 @@ import {
   deposit,
   compound,
   unstake,
-  claimReferral,
   initBlacklist
 } from "./instructions";
 

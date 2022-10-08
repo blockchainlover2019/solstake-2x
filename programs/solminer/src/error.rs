@@ -43,4 +43,10 @@ pub enum CustomError {
 
     #[msg("MinerNotStarted")]
     MinerNotStarted,
+
+    #[msg("Miner is already started.")]
+    MinerAlreadyStarted,
+
+    #[msg("Zero address is detected.")]
+    ZeroAddressDetected
 }

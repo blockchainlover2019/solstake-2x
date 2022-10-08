@@ -11,7 +11,7 @@ pub struct Compound<'info> {
     pub user: Signer<'info>,
 
     #[account(
-      seeds = [SETTINGS_SEED, settings.admin.as_ref()],
+      seeds = [SETTINGS_SEED],
       bump = settings.bump,
       has_one = pool,
       has_one = marketing_wallet
@@ -88,22 +88,6 @@ pub fn handler(ctx: Context<Compound>) -> Result<()> {
         .checked_sub(compound_fee)
         .unwrap();
     accts.invest_data.days += 1;
-
-    // send compound_fee to marketing wallet
-    /*let signer_seeds: &[&[&[u8]]] = &[&[POOL_SEED.as_ref(), &[accts.settings.pool_bump]]];
-    invoke_signed(
-        &system_instruction::transfer(
-            &accts.pool.key(),
-            &accts.marketing_wallet.key(),
-            compound_fee,
-        ),
-        &[
-            accts.pool.to_account_info(),
-            accts.marketing_wallet.to_account_info(),
-            accts.system_program.to_account_info(),
-        ],
-        signer_seeds,
-    )?;*/
 
     Ok(())
 }

@@ -7,6 +7,13 @@ use crate::{constants::*, error::*, states::*};
 pub struct InitBlackList<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
+    
+    #[account(
+      seeds = [SETTINGS_SEED],
+      bump,
+      has_one = admin
+    )]
+    pub settings: Box<Account<'info, Settings>>,
 
     #[account(
         init,

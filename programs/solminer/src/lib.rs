@@ -19,15 +19,8 @@ use crate::instructions::*;
 pub mod solminer {
     use super::*;
 
-    pub fn initialize(
-        ctx: Context<Initialize>,
-        roi: u64, 
-        fee: u64, 
-        ref_fee: u64,
-        withdraw_tax: u64,
-        compound_fee: u64
-    ) -> Result<()> {
-        initialize::handler(ctx, roi, fee, ref_fee, withdraw_tax, compound_fee)
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        initialize::handler(ctx)
     }
 
     pub fn add_blacklist(ctx: Context<AddBlacklist>, addr: Pubkey) -> Result<()> {

@@ -12,7 +12,7 @@ pub struct Unstake<'info> {
     pub user: Signer<'info>,
 
     #[account(
-      seeds = [SETTINGS_SEED, settings.admin.as_ref()],
+      seeds = [SETTINGS_SEED],
       bump = settings.bump,
       has_one = dev_wallet,
       has_one = pool

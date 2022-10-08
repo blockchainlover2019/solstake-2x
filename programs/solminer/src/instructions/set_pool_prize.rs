@@ -10,8 +10,9 @@ pub struct SetPoolPrize<'info> {
 
     #[account(
         mut,
-        seeds = [SETTINGS_SEED, admin.key().as_ref()],
+        seeds = [SETTINGS_SEED],
         bump,
+        has_one = admin
     )]
     pub settings: Box<Account<'info, Settings>>,
 }
