@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("JA9S2YDFqL9RbB71dmvJQjtzd2mr9tZC8psD9gYTdnbn");
+declare_id!("4N9p69ju8BtQCLZ96DgCQ8cXHgmebiwhHhCyMxVkNU7R");
 
 /// constant
 pub mod constants;
@@ -16,7 +16,7 @@ pub mod utils;
 use crate::instructions::*;
 
 #[program]
-pub mod solminer {
+pub mod solstake {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
