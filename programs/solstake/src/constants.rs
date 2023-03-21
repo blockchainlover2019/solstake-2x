@@ -9,3 +9,4 @@ pub const DAY_IN_SEC: u64 = 3600 * 24;
 pub const STAKE_LIMIT: u64 = 5;
 
 pub const FEE_DIVIDER: u64 = 10000;
+pub const WITHDRAW_LIMIT: u64 = 65;
